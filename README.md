@@ -21,25 +21,14 @@ Notes
 -----
 
 This specification was made very quickly for fun, and it could probably
-be improved. For example, it might be helpful to add some documentation
-to the specification, and it might be an improvement to automatically
-detect one of multiple versions of the format from the header, and parse
-accordingly. Contributions welcome.
+be improved. 
 
-The specifications have only been tested superficially, on a single-layer
-v5 lines document with strokes of a single brush type and size. To be honest
-I haven't even rendered the output to check it makes sense.
-The v3 spec has not been tested at all. Issues or corrections welcome.
+The specifications have only been tested superficially, on a
+v6 lines document prepared in xochitl app version 3.8.2.
 
 The reMarkable lines format evolves as the reMarkable receives updates,
-and this repository is probably not going to be kept up to date. Forks
+and this repository is not going to be kept up to date. Forks
 are welcome.
-
-However, at least for the time being, this project might serve as a useful
-starting point for someone who wants to make the specification properly,
-and it might save a little work if someone just wants a parser in a
-Kaitai-supported language.
-
 
 Contents
 --------
@@ -47,10 +36,9 @@ Contents
 * `rm_v5.ksy`---spec for reMarkable .lines format, version 5
   * `hello.rm`---example v5 lines binary file
 * `rm_v3.ksy`---spec for reMarkable .lines format, version 3
-
-TODO:
-
-* `rm_v0.ksy`---spec for reMarkable .lines format, early version (no number)
+* `rm_v6.ksy`---spec for reMarkable .lines format, version 6
+* `leb128.ksy`---spec for Little Endian Base 128 which is used in .lines format, version 6
+* `rm_v6.hexpat`---[ImHex](https://github.com/WerWolv/ImHex) pattern for .lines format, version 6
 
 Credits
 -------
@@ -77,5 +65,8 @@ Time for an overly gratuitous thank you speech:
   It is a technology that has an unquestionably positive impact on my life
   (and in case anyone hasn't noticed, that's saying something for a technology
   these days).
+* Thanks to [rM Hacks discord server](https://discord.com/invite/bgVXW2bchN) for 
+  pointing out there's an env variable **SCENE_FILE_V6_DEBUG** which made 
+  the process of analyzing binary format much easier.
 
 In case it's not clear, this repository is not affiliated with reMarkable AS.
