@@ -12,7 +12,8 @@ format.
 is a declarative parser specification language for binary data formats,
 and an accompanying parser generator.
 Kaitai Struct specifications can be compiled to code for a parser in one
-of various languages.
+of various languages. It also has serialization capabilites, although
+they are quite limited at this point.
 
 This repository contains a Kaitai Struct specification for some versions
 of the reMarkable lines (`.rm`) format.
@@ -23,8 +24,9 @@ Notes
 This specification was made very quickly for fun, and it could probably
 be improved. 
 
-The specifications have only been tested superficially, on a
-v6 lines document prepared in xochitl app version 3.8.2.
+The specifications have only been tested superficially.
+Version 6 the of specification has only been tested on documents 
+prepared in the [xochitl](https://developer.remarkable.com/documentation/xochitl) app version 3.8.2.
 
 The reMarkable lines format evolves as the reMarkable receives updates,
 and this repository is not going to be kept up to date. Forks
@@ -33,17 +35,16 @@ are welcome.
 Contents
 --------
 
-* `rm_v5.ksy`---spec for reMarkable .lines format, version 5
-  * `hello.rm`---example v5 lines binary file
-* `rm_v3.ksy`---spec for reMarkable .lines format, version 3
-* `rm_v6.ksy`---spec for reMarkable .lines format, version 6
-* `leb128.ksy`---spec for Little Endian Base 128 which is used in .lines format, version 6
-* `rm_v6.hexpat`---[ImHex](https://github.com/WerWolv/ImHex) pattern for .lines format, version 6
+* `rm_v3.ksy` - spec for reMarkable .lines format, version 3
+* `rm_v5.ksy` - spec for reMarkable .lines format, version 5
+  * `hello_v5.rm` - example v5 lines binary file
+* `leb128.ksy` - spec for Little Endian Base 128 which is used in .lines format, version 6
+* `rm_v6.ksy` - spec for reMarkable .lines format, version 6
+  * `hello_v6.rm` - example v6 lines binary file
+* `rm_v6.hexpat` - [ImHex](https://github.com/WerWolv/ImHex) pattern for .lines format, version 6
 
 Credits
 -------
-
-Time for an overly gratuitous thank you speech:
 
 * Thanks to ax3l for documenting a
   [thorough exploration of the binary format](https://plasma.ninja/blog/devices/remarkable/binary/format/2017/12/26/reMarkable-lines-file-format.html),
@@ -69,4 +70,4 @@ Time for an overly gratuitous thank you speech:
   pointing out there's an env variable **SCENE_FILE_V6_DEBUG** which made 
   the process of analyzing binary format much easier.
 
-In case it's not clear, this repository is not affiliated with reMarkable AS.
+This repository is not affiliated with reMarkable AS.

@@ -3,6 +3,7 @@ meta:
   id: rm_v6
   title: reMarkable .lines file, version=6
   file-extension: rm
+  application: xochitl
   endian: le
   imports:
     - leb128
@@ -28,7 +29,9 @@ types:
       - id: header_type
         type: u1
         enum: packet_type
-
+    instances:
+      len:
+        value: 8
   sig_id:
     seq:
       - id: sig
@@ -94,6 +97,9 @@ types:
         type: sig_u4
       - id: deleted_length
         type: u4
+    instances:
+      len:
+        value: 8 + id.len + left.len + right.len
 
   positioned_child_packet:
     seq:
@@ -103,6 +109,9 @@ types:
         type: id_field
       - id: child_packet
         type: positioned_packet
+    instances:
+      len:
+        value: 1 + parent_id.len + child_packet.len
 
   uuid_packet:
     seq:
@@ -122,6 +131,9 @@ types:
         type: u1
       - id: unknown_byte_2
         type: u1
+    instances:
+      len:
+        value: 25
 
   migration_info_packet:
     seq:
@@ -137,6 +149,9 @@ types:
         type: sig_u1
       - id: v3
         type: u1
+    instances:
+      len:
+        value: 5 + migration_id.len
 
   page_stats_packet:
     seq:
@@ -160,6 +175,9 @@ types:
         type: sig_u4
       - id: keyboard_count
         type: u4
+    instances:
+      len:
+        value: 25
 
   scene_info_current_layer:
     seq:
@@ -175,6 +193,9 @@ types:
         type: sig_id
       - id: value
         type: id_field
+    instances:
+      len:
+        value: 7 + timestamp.len + value.len
 
   scene_info_background_visible:
     seq:
@@ -190,6 +211,9 @@ types:
         type: sig_u1
       - id: value
         type: u1
+    instances:
+      len:
+        value: 8 + timestamp.len
 
   scene_info_root_document_visible:
     seq:
@@ -205,6 +229,9 @@ types:
         type: sig_u1
       - id: value
         type: u1
+    instances:
+      len:
+        value: 8 + timestamp.len
 
   scene_info_packet:
     seq:
@@ -214,6 +241,9 @@ types:
         type: scene_info_background_visible
       - id: root_document_visible
         type: scene_info_root_document_visible
+    instances:
+      len:
+        value: current_layer.len + background_visible.len + root_document_visible.len
 
   scene_tree_move_packet:
     seq:
@@ -237,6 +267,9 @@ types:
         type: sig_id
       - id: parent_id
         type: id_field
+    instances:
+      len:
+        value: 10 + id.len + node.len + parent_id.len
 
   text:
     seq:
@@ -251,7 +284,7 @@ types:
       - id: text
         type: str
         size: stripped_text_length.value
-        encoding: utf-8
+        encoding: UTF-8
     instances:
       len:
         value: 6 + stripped_text_length.value + stripped_text_length.len
@@ -267,6 +300,19 @@ types:
       - id: text
         type: text
         if: positioned_packet.deleted_length == 0
+      - id: font_weight_sig
+        type: sig_u4
+        if: positioned_packet.deleted_length == 0 and
+          text_item_length > text.len + positioned_packet.len
+      - id: font_weight
+        type: u4
+        if: positioned_packet.deleted_length == 0 and
+          text_item_length > text.len + positioned_packet.len
+    instances:
+      len:
+        value: 'positioned_packet.deleted_length == 0 ? 
+          10 + positioned_packet.len + text.len : 
+          5 + positioned_packet.len'
 
   text_style:
     seq:
@@ -284,6 +330,9 @@ types:
         type: sig_u1
       - id: style
         type: u1
+    instances:
+      len:
+        value: 8 + key.len + timestamp.len
 
   text_position:
     seq:
@@ -313,6 +362,10 @@ types:
         type: sig_u4
       - id: text_width
         type: f4
+    instances:
+      # without array
+      len:
+        value: 36 + num_styles.len
 
   text_packet:
     seq:
@@ -340,6 +393,10 @@ types:
         repeat-expr: num_items.value
       - id: position
         type: text_position
+    instances:
+      # without array
+      len:
+        value: 16 + parent_id.len + num_items.len + position.len
 
   scene_tree_node_packet:
     seq:
@@ -387,6 +444,9 @@ types:
         type: sig_id
       - id: value
         type: id_field
+    instances:
+      len:
+        value: 6 + timestamp.len + value.len
 
   anchor_mode:
     seq:
@@ -404,6 +464,9 @@ types:
         type: sig_u1
       - id: value
         type: u1
+    instances:
+      len:
+        value: 9 + timestamp.len
 
   anchor_threshold_id:
     seq:
@@ -421,6 +484,9 @@ types:
         type: sig_u4
       - id: value
         type: f4
+    instances:
+      len:
+        value: 12 + timestamp.len
 
   anchor_initial_origin_x:
     seq:
@@ -438,6 +504,9 @@ types:
         type: sig_u4
       - id: value
         type: f4
+    instances:
+      len:
+        value: 12 + timestamp.len
 
   scene_tree_node_anchor:
     seq:
@@ -449,6 +518,9 @@ types:
         type: anchor_threshold_id
       - id: origin
         type: anchor_initial_origin_x
+    instances:
+      len:
+        value: id.len + mode.len + threshold.len + origin.len
 
   crdt_group_item_node:
     seq:
@@ -462,6 +534,9 @@ types:
         type: u1
       - id: node_id
         type: id_field
+    instances:
+      len:
+        value: 6 + stripped_node_id_length.len + node_id.len
 
   crdt_group_item_packet:
     seq:
@@ -470,6 +545,11 @@ types:
       - id: node
         type: crdt_group_item_node
         if: positioned_packet.child_packet.deleted_length == 0
+    instances:
+      len:
+        value: 'positioned_packet.child_packet.deleted_length == 0 ?
+          positioned_packet.len + node.len :
+          positioned_packet.len'
 
   point:
     seq:
@@ -486,6 +566,8 @@ types:
       - id: pressure
         type: u1
     instances:
+      len:
+        value: 14
       speed_value:
         value: speed / 4.0
       width_value:
@@ -537,6 +619,12 @@ types:
       - id: move_id
         type: id_field
         if: length - points_length - 33 > 0
+    instances:
+      len:
+        # without array
+        value: 'length - points_length - 33 > 0 ?
+          37 + ts.len + move_id.len :
+          36 + ts.len'
 
   crdt_line_item_packet:
     seq:
@@ -545,6 +633,11 @@ types:
       - id: points
         type: crdt_line_item_points
         if: positioned_packet.child_packet.deleted_length == 0
+    instances:
+      len:
+        value: 'positioned_packet.child_packet.deleted_length == 0 ?
+          positioned_packet.len + points.len :
+          positioned_packet.len'
 
   glyph_rect:
     seq:
@@ -562,6 +655,9 @@ types:
         type: f8
       - id: height
         type: f8
+    instances:
+      len:
+        value: 38
 
   crdt_glyph_item_value:
     seq:
@@ -595,6 +691,9 @@ types:
         type: u1
       - id: include_last_id
         type: u1
+    instances:
+      len:
+        value: 17 + text.len + rect.len + first.len + last.len
 
   crdt_glyph_item_packet:
     seq:
@@ -603,6 +702,11 @@ types:
       - id: value
         type: crdt_glyph_item_value
         if: positioned_packet.child_packet.deleted_length == 0
+    instances:
+      len:
+        value: 'positioned_packet.child_packet.deleted_length == 0 ?
+          positioned_packet.len + value.len :
+          positioned_packet.len'
 
   packet:
     seq:

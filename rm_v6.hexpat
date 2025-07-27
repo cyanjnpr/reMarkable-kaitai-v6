@@ -234,6 +234,15 @@ struct TextItem {
     
     if (packet.deleted_length == 0) {
         Text text;
+        
+        if (text_item_length > sizeof(packet) + sizeof(text)) {
+            u8 font_weight_sig;
+            u32 font_weight;
+            if (is_u32_sig(font_weight_sig)) {
+            } else {
+                break;
+            }
+        } 
     }
     
     if (is_len_sig(text_item_length_sig)) {
