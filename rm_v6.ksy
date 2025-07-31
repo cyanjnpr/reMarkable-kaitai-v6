@@ -1,4 +1,3 @@
-# tested only on files produced by xochitl 3.8.2
 meta:
   id: rm_v6
   title: reMarkable .lines file, version=6
@@ -310,9 +309,8 @@ types:
           text_item_length > text.len + positioned_packet.len
     instances:
       len:
-        value: 'positioned_packet.deleted_length == 0 ? 
-          10 + positioned_packet.len + text.len : 
-          5 + positioned_packet.len'
+        doc: contrary to other len fields this one is not derived manually because of the weight field
+        value: 5 + text_item_length
 
   text_style:
     seq:
@@ -528,15 +526,15 @@ types:
         type: sig_len
       - id: node_id_length
         type: u4
-      - id: stripped_node_id_length
-        type: leb128
       - id: unknown_byte
         type: u1
+      - id: node_id_sig
+        type: sig_id
       - id: node_id
         type: id_field
     instances:
       len:
-        value: 6 + stripped_node_id_length.len + node_id.len
+        value: 7 + node_id.len
 
   crdt_group_item_packet:
     seq:
@@ -730,6 +728,9 @@ types:
         type: scene_tree_node_anchor
         if: packet_header.header_type == packet_type::tree_node and 
           packet_body.as<scene_tree_node_packet>.len < packet_header.length
+    instances:
+      len:
+        value: packet_header.length + packet_header.len
 
 enums:
   packet_type:

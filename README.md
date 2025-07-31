@@ -25,7 +25,7 @@ This specification was made very quickly for fun, and it could probably
 be improved. 
 
 The specifications have only been tested superficially.
-Version 6 the of specification has only been tested on documents 
+Version 6 of the specification has only been tested on documents 
 prepared in the [xochitl](https://developer.remarkable.com/documentation/xochitl) app version 3.8.2.
 
 The reMarkable lines format evolves as the reMarkable receives updates,
@@ -35,13 +35,14 @@ are welcome.
 Contents
 --------
 
-* `rm_v3.ksy` - spec for reMarkable .lines format, version 3
-* `rm_v5.ksy` - spec for reMarkable .lines format, version 5
+* `rm_v3.ksy` - spec for reMarkable lines format, version 3
+* `rm_v5.ksy` - spec for reMarkable lines format, version 5
   * `hello_v5.rm` - example v5 lines binary file
-* `leb128.ksy` - spec for Little Endian Base 128 which is used in .lines format, version 6
-* `rm_v6.ksy` - spec for reMarkable .lines format, version 6
+* `rm_v6.ksy` - spec for reMarkable lines format, version 6
+  * `leb128.ksy` - spec for Little Endian Base 128 which is used in lines format, version 6
   * `hello_v6.rm` - example v6 lines binary file
-* `rm_v6.hexpat` - [ImHex](https://github.com/WerWolv/ImHex) pattern for .lines format, version 6
+* `rm_v6.hexpat` - [ImHex](https://github.com/WerWolv/ImHex) pattern for lines format, version 6
+  * included to make further development of the kaitai spec easier
 
 Credits
 -------

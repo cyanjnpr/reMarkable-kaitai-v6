@@ -413,11 +413,11 @@ struct SceneTreeNodeAnchor {
 struct CrdtGroupItemNode {
     u8 node_id_length_sig;
     u32 node_id_length;
-    type::uLEB128 stripped_node_id_length;
     u8 unknown_byte;
+    u8 node_id_sig;
     ID node_id;
     
-    if (is_len_sig(node_id_length_sig)) {
+    if (is_len_sig(node_id_length_sig) && is_id_sig(node_id_sig)) {
     } else {
         break;
     }
@@ -452,6 +452,28 @@ struct Point {
     u8 pressure [[format("format_pressure"), color("8ec07c")]];
 };
 
+fn transform_points_xs(ref auto points, u32 num_points) {
+    std::mem::Section section = std::mem::create_section("Section");
+    for (u32 i = 0, i < num_points*4, i += 4) {
+      float float_value @ i in section;
+    
+      float_value = points[i/4].x;
+    }
+    float arr[num_points] @ 0x00 in section;
+    return arr;
+};
+
+fn transform_points_ys(ref auto points, u32 num_points) {
+    std::mem::Section section = std::mem::create_section("Section");
+    for (u32 i = 0, i < num_points*4, i += 4) {
+      float float_value @ i in section;
+      // reverse coords
+      float_value = -points[i/4].y;
+    }
+    float arr[num_points] @ 0x00 in section;
+    return arr;
+};
+
 struct CrdtLineItemPoints {
     u8 length_sig;
     u32 length;
@@ -468,7 +490,8 @@ struct CrdtLineItemPoints {
     
     u8 points_length_sig;
     u32 points_length;
-    Point points[points_length / sizeof(Point)];
+    u32 num_points = points_length / sizeof(Point);
+    Point points[num_points];
     u8 ts_sig;
     ID ts;
     if (length - points_length - 33 > 0) {
@@ -488,7 +511,9 @@ struct CrdtLineItemPoints {
     } else {
         break;
     }
-};
+} [[hex::visualize("scatter_plot", 
+        transform_points_xs(points, num_points), 
+        transform_points_ys(points, num_points))]];
 
 struct CrdtLineItem {
     PositionedChildPacket positioned;
